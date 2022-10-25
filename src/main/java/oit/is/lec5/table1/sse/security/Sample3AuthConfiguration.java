@@ -66,8 +66,8 @@ public class Sample3AuthConfiguration {
      * CSRFがONになっているとフォームが対応していないためアクセスできない
      * HTTPヘッダのX-Frame-OptionsがDENYになるとiframeでlocalhostでのアプリが使えなくなるので，H2DBのWebクライアントのためだけにdisableにする必要がある
      */
-    // http.csrf().disable();
-    // http.headers().frameOptions().disable();
+    http.csrf().disable();
+    http.headers().frameOptions().disable();
     return http.build();
   }
 
