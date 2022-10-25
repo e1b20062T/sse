@@ -51,6 +51,26 @@ public class Sample3AuthConfiguration {
     return new InMemoryUserDetailsManager(customer1, customer2, seller);
   }
 
+  @Bean
+  public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    // Spring Securityのフォームを利用してログインを行う（自前でログインフォームを用意することも可能）
+    http.formLogin();
+    // http://localhost:8000/sample3 で始まるURLへのアクセスはログインが必要
+    // mvcMatchers().authenticated()がmvcMatchersに指定されたアクセス先に認証処理が必要であることを示す
+    // authenticated()の代わりにpermitAll()と書くと認証不要となる
+    http.authorizeHttpRequests()
+        .mvcMatchers("/sample5/**").authenticated();
+    http.logout().logoutSuccessUrl("/"); // ログアウト時は "http://localhost:8000/" に戻る
+    /**
+     * 以下2行はh2-consoleを利用するための設定なので，開発が完了したらコメントアウトすることが望ましい
+     * CSRFがONになっているとフォームが対応していないためアクセスできない
+     * HTTPヘッダのX-Frame-OptionsがDENYになるとiframeでlocalhostでのアプリが使えなくなるので，H2DBのWebクライアントのためだけにdisableにする必要がある
+     */
+    // http.csrf().disable();
+    // http.headers().frameOptions().disable();
+    return http.build();
+  }
+
   /**
    *
    * UserBuilder users = User.builder();で利用するPasswordEncoderを指定する．
